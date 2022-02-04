@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function adbt_caching_theme()
+{
+  return [
+    'article_cache_nodes' => [
+      'render element' => 'element',
+      'variables' => [
+        'node_list' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_breadcrumb().
+ */
+function adbt_caching_preprocess_breadcrumb(&$variables) {
+  // Add current node title to the breadcrumb.
+  if (($node = \Drupal::routeMatch()->getParameter('node')) && $variables['breadcrumb']) {
+    $variables['breadcrumb'][] = ['text' => $node->getTitle()];
+    // $variables['#cache']['contexts'][] = 'url.path';
+  }
+}

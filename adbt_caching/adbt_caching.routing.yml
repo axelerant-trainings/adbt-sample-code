@@ -1,0 +1,15 @@
+adbt_caching.heavy_computed_data:
+  path: '/adbt/caching/heavy-computed-data'
+  defaults:
+    _controller: '\Drupal\adbt_caching\Controller\ShowHeavyComputedDataController::showdata'
+    _title: 'Cache actions'
+  requirements:
+    _access: 'TRUE'
+
+adbt_caching.caching_operation_form:
+  path: '/adbt/caching/operation-form'
+  defaults:
+    _form: '\Drupal\adbt_caching\Form\CachingOperationForm'
+    _title: 'Caching Operations'
+  requirements:
+    _access: 'TRUE'

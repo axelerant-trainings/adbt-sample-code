@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Shows details of Article Cached Nodes.
+ *
+ * Available variables:
+ * - node_list: Array of Article node objects.
+ */
+#}
+
+{% for node in node_list %}
+  <div>
+    <h1>{{ node.label }}</h1>
+  </div>
+{% endfor %}

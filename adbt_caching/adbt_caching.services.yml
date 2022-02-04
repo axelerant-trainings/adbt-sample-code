@@ -1,0 +1,4 @@
+services:
+  adbt_caching.utility:
+    class: Drupal\adbt_caching\Service\AdbtCachingUtility
+    arguments: ['@messenger', '@cache.default']
