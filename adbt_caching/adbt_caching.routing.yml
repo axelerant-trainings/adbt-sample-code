@@ -13,3 +13,11 @@ adbt_caching.caching_operation_form:
     _title: 'Caching Operations'
   requirements:
     _access: 'TRUE'
+
+adbt_caching.admin_settings:
+  path: '/admin/config/custom-settings'
+  defaults:
+    _form: '\Drupal\adbt_caching\Form\CustomSettingsForm'
+    _title: 'Custom Settings'
+  requirements:
+    _permission: 'administer site configuration'

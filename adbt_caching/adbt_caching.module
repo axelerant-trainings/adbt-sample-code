@@ -22,6 +22,6 @@ function adbt_caching_preprocess_breadcrumb(&$variables) {
   // Add current node title to the breadcrumb.
   if (($node = \Drupal::routeMatch()->getParameter('node')) && $variables['breadcrumb']) {
     $variables['breadcrumb'][] = ['text' => $node->getTitle()];
-    // $variables['#cache']['contexts'][] = 'url.path';
+    // $variables['#cache']['contexts'][] = 'url.query_args:adbt';
   }
 }

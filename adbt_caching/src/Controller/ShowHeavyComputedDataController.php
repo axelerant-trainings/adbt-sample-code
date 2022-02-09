@@ -7,7 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Controller routines to show heavy computed date.
+ * Controller routines to show heavy computed data.
  */
 class ShowHeavyComputedDataController extends ControllerBase {
 
@@ -44,10 +44,11 @@ class ShowHeavyComputedDataController extends ControllerBase {
    *   A render array representing the page content.
    */
   public function showdata() {
+    // Show some heavy computed data.
     $this->utility->getSomeHeavyComputationThing();
 
     return [
-      '#markup' => 'hello world!',
+      '#markup' => 'Hello World!',
     ];
   }
 
