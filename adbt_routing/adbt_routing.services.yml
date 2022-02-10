@@ -1,0 +1,22 @@
+services:
+  adbt_routing.route_subscriber:
+    class: Drupal\adbt_routing\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  # Paramconverter to implement custom parameter upcasting.
+  adbt_routing.param_converter:
+    class: Drupal\adbt_routing\Routing\ParamConverter
+    tags:
+      - { name: paramconverter }
+
+  # Dynamic routes (Alternate method)
+  adbt_routing.dynamic_route:
+    class: Drupal\adbt_routing\Service\DynamicRoute
+    arguments: ['@entity_type.manager']
+
+  # Access Check (Custom)
+  adbt_routing.custom_check:
+    class: Drupal\adbt_routing\Access\CustomAccessCheck
+    tags:
+      - { name: access_check, applies_to: _adbt_routing_custom_check }

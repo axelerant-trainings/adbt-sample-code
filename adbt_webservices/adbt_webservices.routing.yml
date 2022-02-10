@@ -1,0 +1,7 @@
+adbt_webservices.content:
+  path: '/adbt/webservices/content' 
+  defaults: 
+    _controller: '\Drupal\adbt_webservices\Controller\SampleController::content' 
+    _title: 'Web Services (Training)'
+  requirements: 
+    _permission: 'access content'

@@ -1,0 +1,86 @@
+# DYNAMIC ROUTES.
+route_callbacks:
+  - '\Drupal\adbt_routing\Routing\NodeTypeRoutes::routes'
+  - 'adbt_routing.dynamic_route:routes'
+
+# STATIC ROUTES.
+adbt_routing.content:
+  path: '/adbt/routing/content'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::content' 
+    _title: 'Routing System (Training)'
+  requirements: 
+    _permission: 'access content'
+
+# ROUTE PARAMETERS.
+adbt_routing.user_parameter:
+  path: '/adbt/routing/user/{user}'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::userParameter' 
+    _title: 'Routing System (Training)'
+  requirements: 
+    _permission: 'access content'
+
+adbt_routing.parameter_validation:
+  path: '/adbt/routing/parameter-validation/{user}/{message}'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::multipleParameter' 
+    _title: 'Routing System (Training)'
+  requirements: 
+    _permission: 'access content'
+    user: '\d+'
+    message: '[a-zA-Z0-9]+'
+
+adbt_routing.entity_upcasting:
+  path: '/adbt/routing/upcasting/{user}'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::userParameter' 
+    _title: 'Routing System (Training)'
+  requirements: 
+    _permission: 'access content'
+  options:
+    parameters:
+      user:
+        type: 'entity:user'
+
+adbt_routing.custom_upcasting:
+  path: '/adbt/routing/custom-upcasting/{user}/{message}'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::multipleParameter' 
+    _title: 'Routing System (Training)'
+  requirements: 
+    _permission: 'access content'
+  options:
+    parameters:
+      user:
+        type: 'mycustom-upcast'
+      message:
+        type: 'mycustom-upcast'
+
+adbt_routing.extra_parameter:
+  path: '/adbt/routing/extra-parameter'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::extraParameter' 
+    _title: 'Routing System (Training)'
+    new_param: 'Axelerant!'
+  requirements: 
+    _permission: 'access content'
+
+# ACCESS CHECKS.
+# Single route custom access check.
+adbt_routing.custom_access_check:
+  path: '/adbt/routing/custom-access-check'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::content' 
+    _title: 'Routing System (Training)'
+  requirements:
+    _custom_access: '\Drupal\adbt_routing\Controller\SampleController::access'
+
+# Reusable access check.
+adbt_routing.custom_reusable_access_check:
+  path: '/adbt/routing/custom-reusable-access-check'
+  defaults: 
+    _controller: '\Drupal\adbt_routing\Controller\SampleController::content' 
+    _title: 'Routing System (Training)'
+  requirements:
+    _adbt_routing_custom_check: 'TRUE'

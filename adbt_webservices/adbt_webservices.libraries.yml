@@ -1,0 +1,8 @@
+adbt_webservices:
+  version: VERSION
+  js:
+    js/adbt_webservices.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
