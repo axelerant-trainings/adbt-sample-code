@@ -1,0 +1,7 @@
+adbt_testing.ajax_form:
+  path: '/adbt-testing/ajax-form'
+  defaults:
+    _form: '\Drupal\adbt_testing\Form\AjaxShowMySelectionForm'
+    _title: 'Ajax Test Form'
+  requirements:
+    _access: 'TRUE'

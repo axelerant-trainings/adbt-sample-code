@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - adbt_testing
+    - system
+  theme:
+    - bartik
+id: showtrainingname
+theme: bartik
+region: highlighted
+weight: 0
+provider: null
+plugin: adbt_testing_training_name
+settings:
+  id: adbt_testing_training_name
+  label: 'Current Training'
+  label_display: visible
+  provider: adbt_testing
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'

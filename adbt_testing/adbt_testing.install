@@ -1,0 +1,41 @@
+<?php
+
+function adbt_testing_install() {
+  // Update site name.
+  $configFactory = \Drupal::configFactory();
+  $configFactory->getEditable('system.site')
+    ->set('name', 'ADBT Automated Testing')
+    ->save();
+}
+
+/**
+ * Implements hook_schema().
+ */
+function adbt_testing_schema()
+{
+  $schema['adbt_testing_testimonial'] = [
+    'description' => 'User testimonials about the site.',
+    'fields' => [
+      'id' => [
+        'description' => 'Testimonial ID.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'User ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'testimonial' => [
+        'description' => 'Stores testimonial input.',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}

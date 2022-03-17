@@ -1,0 +1,11 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_presave().
+ */
+function adbt_testing_node_presave(EntityInterface $node) {
+  $title = $node->label();
+  $node->title = $title . ' #Awesome!';
+}

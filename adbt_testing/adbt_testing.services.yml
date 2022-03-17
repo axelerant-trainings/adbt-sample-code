@@ -1,0 +1,9 @@
+services:
+  adbt_testing.basic_utility:
+    class: Drupal\adbt_testing\Service\AdbtTestingBasicUtility
+  adbt_testing.config_utility:
+    class: Drupal\adbt_testing\Service\AdbtTestingConfigUtility
+    arguments: ['@config.factory']
+  adbt_testing.database_utility:
+    class: Drupal\adbt_testing\Service\AdbtTestingDatabaseUtility
+    arguments: ['@database']
