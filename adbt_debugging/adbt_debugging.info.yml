@@ -1,0 +1,7 @@
+name: Debugging & Troubleshoot (Training)
+description: Drupal sample code for the topic Debugging & Troubleshooting.
+type: module
+package: Axelerant Drupal Backend Training
+
+core: 8.x
+core_version_requirement: ^8 || ^9

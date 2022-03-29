@@ -1,0 +1,7 @@
+adbt_debugging.even_odd_numbers:
+  path: '/adbt-debugging/{number}'
+  defaults:
+    _controller: '\Drupal\adbt_debugging\Controller\EvenOddNumbersController::content'
+    _title: 'Identify Even/Odd'
+  requirements:
+    _access: 'TRUE'
