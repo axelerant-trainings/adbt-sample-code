@@ -102,11 +102,30 @@ No additional configuration required.
 
 ### PHPStorm
 
-In PHPStorm navigate to Preferences >> PHP >> Server  
+In PHPStorm navigate to Preferences >> PHP >> Server
 And update `Absolute path on server` against vendor directory as /var/www/html/vendor
 
 Now, run drush commands within DDEV shell
 ```
 ddev ssh
 drush my_command
+```
+
+## Lando Setup (XDebug)
+
+### Visual Studio Code
+Copy file `.lando.local.yml` & `.lando.php.ini` from the reference directory of this module, and place it in your project parallel to the `web` directory.
+
+Now, rebuild the lando:
+```
+lando rebuild
+```
+
+### PHPStorm
+
+Copy file `.lando.local.yml` & `.lando.php.ini` from the reference directory of this module, and place it in your project parallel to the `web` directory.
+
+Now, rebuild the lando:
+```
+lando rebuild
 ```
