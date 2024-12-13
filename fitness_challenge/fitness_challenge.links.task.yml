@@ -1,0 +1,27 @@
+fitness_challenge.challenge_page_menu:
+  title: 'Our Challenge Page'
+  route_name: fitness_challenge.challenge_page
+  base_route: fitness_challenge.challenge_page
+  weight: 1
+
+fitness_challenge.goal_form_tab:
+  title: 'Goal Form'
+  route_name: fitness_challenge.goal_form
+  base_route: fitness_challenge.challenge_page
+  weight: 3
+
+fitness_challenge.workout_form_tab:
+  title: 'Workout Form'
+  route_name: fitness_challenge.workout_form
+  base_route: fitness_challenge.challenge_page
+  weight: 2
+
+fitness_challenge.fitness_challenge_subtab_default:
+  title: 'Default Page'
+  route_name: fitness_challenge.challenge_page
+  parent_id: fitness_challenge.challenge_page_menu
+
+fitness_challenge.submitted_success_stories:
+  title: 'My Success Stories'
+  route_name: fitness_challenge.my_success_stories
+  parent_id: fitness_challenge.challenge_page_menu

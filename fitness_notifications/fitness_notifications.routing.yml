@@ -1,0 +1,11 @@
+fitness_notifications.confirm_support_request:
+  path: '/confirm-support-request/{node}'
+  defaults:
+    _form: '\Drupal\fitness_notifications\Form\ConfirmSupportRequestForm'
+    _title: 'Confirm Support Request Notification'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      node:
+        type: entity:node

@@ -1,0 +1,6 @@
+name: 'Fitness Challenge'
+type: module
+description: 'A custom module for fitness challenges.'
+core_version_requirement: ^11
+package: Custom
+configure: fitness_challenge.settings

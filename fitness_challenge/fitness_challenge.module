@@ -1,0 +1,146 @@
+<?php
+
+use Drupal\node\NodeInterface;
+
+
+/**
+ * Implements hook_cron().
+ 
+ * This cron job checks workout durations and assigns the 'premium' role
+ * to users whose total workout duration exceeds 1000 minutes.
+ */
+function fitness_challenge_cron() {
+  // Use the RoleStorage service to load the 'premium' role.
+  $role_storage = \Drupal::entityTypeManager()->getStorage('user_role');
+  $premium_role = $role_storage->load('premium');
+  
+  // Check if the 'premium' role exists.
+  if (!$premium_role) {
+    \Drupal::logger('fitness_challenge')->error('Premium role does not exist.');
+    return;
+  }
+
+  // Get the role ID for the premium role.
+  $premium_rid = $premium_role->id();
+
+  // Query to find all users whose total workout duration exceeds 1000 minutes.
+  $query = \Drupal::database()->select('fitness_workouts', 'fw')->fields('fw', ['uid']);
+  $query->addExpression('SUM(fw.duration)', 'total_duration');
+  $query->groupBy('fw.uid')
+  ->having('SUM(fw.duration) > :threshold', [':threshold' => 1000]);
+
+  $result = $query->execute();
+
+  // Loop through the result and assign the premium role to users.
+  foreach ($result as $record) {
+    $uid = $record->uid;
+    $total_duration = $record->total_duration;
+
+    // Load the user entity.
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+    if ($user) {
+      // Check if the user already has the premium role.
+      if (!$user->hasRole('premium')) {
+        // Assign the premium role to the user.
+        $user->addRole('premium');
+        $user->save();
+
+        // Log the role assignment.
+        \Drupal::logger('fitness_challenge')->notice('Assigned premium role to user @uid with total workout duration of @duration minutes.', [
+          '@uid' => $uid,
+          '@duration' => $total_duration,
+        ]);
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function fitness_challenge_page_attachments_alter(array &$attachments) {
+  // Get the current route match object.
+  $route_match = \Drupal::routeMatch();
+
+  // Check if we are on a node page.
+  if ($route_match->getRouteName() == 'entity.node.canonical') {
+    $node = $route_match->getParameter('node');
+    // Ensure the node exists and is of type 'article'.
+    if ($node instanceof NodeInterface && $node->bundle() === 'article') {
+      // Attach the library specifically for Article pages.
+      $attachments['#attached']['library'][] = 'fitness_challenge/fitness_challenge.global';
+
+      // Load the comment field for the node and count comments.
+      $storage = \Drupal::entityTypeManager()->getStorage('comment');
+      $comment_count = $storage->getQuery()
+        ->condition('entity_id', $node->id())
+        ->condition('comment_type', 'comment')
+        ->count()
+        ->accessCheck(TRUE)
+        ->execute();
+
+      // Pass article's comment count to the Javascript.
+      $attachments['#attached']['drupalSettings']['fitness_challenge']['comment_count'] = $comment_count;
+    }
+  }
+}
+
+
+
+/**
+ * Implements hook_help().
+ *
+ * Provides help information for the fitness module.
+ *
+ * @param string $route_name
+ *   The name of the route for which help is being requested.
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *   The route match object containing information about the current route.
+ */
+function fitness_challenge_help($route_name, $route_match) {
+  // Check if the help page for the fitness module is being accessed.
+  switch ($route_name) {
+    case 'help.page.fitness_challenge':
+      // Return a description of the module's functionality.
+      return '<p>' . t('This module provides fitness challenges and tracking.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Alters the workout challenge form to add a difficulty level selection.
+ *
+ * @param array &$form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ * @param string $form_id
+ *   The ID of the form being altered.
+ */
+function fitness_challenge_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Check if the form being altered is the workout challenge form.
+  if ($form_id == 'fitness_goal_form') {
+    // Add a difficulty level selection to the form.
+    $form['difficulty'] = [
+      '#type' => 'select',
+      '#title' => t('Difficulty Level'),
+      '#options' => [
+        'easy' => t('Easy'),
+        'medium' => t('Medium'),
+        'hard' => t('Hard'),
+      ],
+      '#weight' => -50,
+      '#required' => TRUE, // Ensure this field is required for submission.
+    ];
+  }
+  
+  // For debugging use XDebug or dump();
+  // Alter article node creation form.
+  if ($form_id == 'node_article_form') {
+    // $form['actions']['submit']['#value'] = t('Submit Article');
+  }
+
+}
+

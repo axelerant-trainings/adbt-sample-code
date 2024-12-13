@@ -1,0 +1,10 @@
+services:
+  fitness_notifications.success_story_subscriber:
+    class: Drupal\fitness_notifications\EventSubscriber\SuccessStorySubscriber
+    arguments: ['@date.formatter', '@logger.factory']
+    tags:
+      - { name: event_subscriber }
+
+  fitness_notifications.notification_service:
+    class: Drupal\fitness_notifications\Service\NotificationService
+    arguments: ['@plugin.manager.mail', '@logger.factory']

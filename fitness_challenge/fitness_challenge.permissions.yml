@@ -1,0 +1,14 @@
+create workout challenge:
+  title: 'Create Workout Challenge'
+  description: 'Allows users to create workout challenges.'
+  restrict access: FALSE
+
+participate in workout challenge:
+  title: 'Participate in Workout Challenge'
+  description: 'Allows users to participate in challenges.'
+  restrict access: FALSE
+
+delete any workout challenge:
+  title: 'Delete any workout challenge'
+  description: 'Allows administrators to delete any workout challenge.'
+  restrict access: TRUE

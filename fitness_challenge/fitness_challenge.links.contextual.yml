@@ -1,0 +1,4 @@
+fitness_challenge.submit_new_goal:
+  route_name: fitness_challenge.goal_form
+  title: 'Submit New Goal'
+  group: node

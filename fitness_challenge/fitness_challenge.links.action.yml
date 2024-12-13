@@ -1,0 +1,13 @@
+# Appears on /submit-fitness-goal page
+fitness_challenge.add_workout_action:
+  title: 'Add Workout'
+  route_name: fitness_challenge.workout_form
+  appears_on:
+    - fitness_challenge.goal_form
+
+# Appears on /admin/content page.
+fitness_challenge.add_workout_2_action:
+  title: 'Add Workout'
+  route_name: fitness_challenge.workout_form
+  appears_on:
+    - system.admin_content

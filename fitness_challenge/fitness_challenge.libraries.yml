@@ -1,0 +1,10 @@
+fitness_challenge.global:
+  version: 1.x
+  css:
+    theme:
+      css/fitness_challenge.css: {}
+  js:
+    js/fitness_challenge.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery

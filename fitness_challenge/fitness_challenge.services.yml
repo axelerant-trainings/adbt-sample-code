@@ -1,0 +1,5 @@
+services:
+  fitness_challenge.challenge_service:
+    class: Drupal\fitness_challenge\Service\WorkoutChallengeService
+    arguments: ['@database', '@logger.factory', '@state', '@current_user', '@config.factory', '@entity_type.manager', '@file_url_generator']
+

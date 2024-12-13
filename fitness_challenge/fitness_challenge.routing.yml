@@ -1,0 +1,73 @@
+fitness_challenge.challenge_page:
+  path: '/ultimate-fitness-challenge'
+  defaults:
+    _controller: '\Drupal\fitness_challenge\Controller\FitnessController::challengePage'
+    _title: 'Ultimate Fitness Challenge'
+  requirements:
+    _permission: 'access content'
+
+fitness_challenge.heavy_computed_data:
+  path: '/heavy-computed-data'
+  defaults:
+    _controller: '\Drupal\fitness_challenge\Controller\ShowHeavyComputedDataController::showdata'
+    _title: 'Heavey Computed Data'
+  requirements:
+    _access: 'TRUE'
+
+fitness_challenge.autocomplete:
+  path: '/fitness-challenge/autocomplete'
+  defaults:
+    _controller: '\Drupal\fitness_challenge\Controller\FitnessChallengeAutocompleteController::handleAutocomplete'
+    _title: 'Autocomplete'
+  requirements:
+    _permission: 'access content'
+
+fitness_challenge.submitted_stories_support_form:
+  path: '/ultimate-fitness-challenge/submitted-stories-support'
+  defaults:
+    _form: '\Drupal\fitness_challenge\Form\SuccessStorySupportForm'
+    _title: 'Success Story Support'
+  requirements:
+    _permission: 'access content'
+
+
+fitness_challenge.my_success_stories:
+  path: '/ultimate-fitness-challenge/my-success-stories'
+  defaults:
+    _controller: '\Drupal\fitness_challenge\Controller\MySuccessStoriesController::storyTable'
+    _title: 'My Success Stories'
+  requirements:
+    _permission: 'access content'
+
+
+fitness_challenge.modal_form:
+  path: '/modal-form/success-story'
+  defaults:
+    _form: '\Drupal\fitness_challenge\Form\SuccessStoryForm'
+    _title: 'Share Success Story'
+  requirements:
+    _permission: 'access content'
+
+fitness_challenge.goal_form:
+  path: '/submit-fitness-goal'
+  defaults:
+    _form: '\Drupal\fitness_challenge\Form\FitnessGoalForm'
+    _title: 'Submit Your Fitness Goal'
+  requirements:
+    _permission: 'create workout challenge'
+
+fitness_challenge.settings:
+  path: '/admin/config/fitness_challenge/settings'
+  defaults:
+    _form: '\Drupal\fitness_challenge\Form\FitnessChallengeConfigForm'
+    _title: 'Fitness Challenge Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+fitness_challenge.workout_form:
+  path: '/workout-form'
+  defaults:
+    _form: '\Drupal\fitness_challenge\Form\WorkoutForm'
+    _title: 'Submit Your Workout'
+  requirements:
+    _permission: 'access content'  # Adjust this permission as necessary.

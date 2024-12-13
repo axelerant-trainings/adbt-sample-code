@@ -1,0 +1,223 @@
+<?php
+
+
+use Drupal\node\NodeInterface;
+use Drupal\Core\Batch\BatchBuilder;
+
+/**
+ * Implements hook_node_insert() 
+ * 
+ * Triggers a batch process when an article node is created.
+ *
+ * @param \Drupal\node\NodeInterface $node
+ *   The node entity that was inserted.
+ */
+function fitness_notifications_node_insert(NodeInterface $node) {
+  // Check if the node is of type 'article'.
+  if ($node->bundle() === 'article') {
+    $total = 100; // Total number of users to notify.
+
+    // Create a batch builder object for defining the batch process.
+    $batch_builder = new BatchBuilder();
+
+    // Set the batch process details, including messages and completion callback.
+    $batch_builder->setTitle(t('Notifying users about the article %title...', ['%title' => $node->getTitle()]))
+      ->setInitMessage(t('Starting the batch process...'))
+      ->setProgressMessage(t('Batch process in progress...'))
+      ->setErrorMessage(t('An error occurred during the notification process.'))
+      ->setFinishCallback('_fitness_notifications_batch_finished');
+
+    // Add a single operation that will handle the batch, allowing it to process in chunks.
+    // Important: Your operation callback should complete each of its execution within the server timeout. Manage $limit value accordingly in your callback.
+    $batch_builder->addOperation('_fitness_notifications_process_notifications', [
+      $node->getTitle(),
+      $total,
+    ]);
+
+    // Set the batch and start the process.
+    batch_set($batch_builder->toArray());
+  }
+}
+
+
+/**
+ * Batch operation callback.
+ * 
+ * Is called by the batch process to send notifications in chunks to the targetted users.
+ * It uses the sandbox array to keep track of progress across multiple iterations.
+ *
+ * @param string $node_title
+ *   The title of the node for which notifications are being sent.
+ * @param int $total
+ *   The total number of users to notify.
+ * @param array $context
+ *   The  batch context array, used to track progress and store results.
+ *   Always the very last argument to pass.
+ */
+function _fitness_notifications_process_notifications($node_title, $total, &$context) {
+  // Initialize sandbox if this is the first pass.
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = $total; // Total number of users to notify.
+  }
+
+  // Define the limit (number of users to process per batch iteration).
+  $limit = 31;
+
+  // Process the next batch of users.
+  for ($i = 1; $i <= $limit && $context['sandbox']['progress'] < $total; $i++) {
+    // Simulate sending a notification (log or actual email logic).
+    \Drupal::logger('fitness_notifications')->info('HTTP #@http: Notifying user @user_id about the new article %node_title', [
+      '@http' => (int) ($context['sandbox']['progress']/$limit) + 1,
+      '%node_title' => $node_title,
+      '@user_id' => $context['sandbox']['progress'] + 1,
+    ]);
+
+    // Considering notifying one user shall take 1 second.
+    sleep(1);
+
+    // Update progress in the sandbox.
+    $context['sandbox']['progress']++;
+    
+    // Store the result of the operation for this user (optional).
+    // But this can be used in final callback function.
+    $context['results']['processed'] = $context['sandbox']['progress'];
+
+  }
+
+  // Update the progress message.
+  $context['message'] = t('Processing a chunk of @limit users, currently completed @current/@total.', [
+    '@limit' => $limit,
+    '@current' => $context['sandbox']['progress'],
+    '@total' => $total,
+  ]);
+
+  // Determine if we're finished or not (using the sandbox).
+  if ($context['sandbox']['progress'] != $total) {
+    // Not finished, so provide the percentage of completion.
+    $context['finished'] = $context['sandbox']['progress'] / $total;
+  }
+  else {
+    // We are finished with the batch.
+    $context['finished'] = 1;
+  }
+}
+
+/**
+ * Callback function when the batch process is finished.
+ *
+ * This function is executed once all batch operations have been processed.
+ * It displays a message indicating the success or failure of the batch operation.
+ *
+ * @param bool $success
+ *   TRUE if the batch process completed successfully, FALSE otherwise.
+ * @param array $results
+ *   An array containing the results of the batch operations, including processed user IDs.
+ * @param array $operations
+ *   The operations that were not completed, if any (in case of errors).
+ */
+function _fitness_notifications_batch_finished($success, array $results, array $operations) {
+  if ($success && isset($results['processed'])) {
+    // Display a success message showing the number of processed users.
+    \Drupal::messenger()->addStatus(t('Notifications successfully sent to @count users.', [
+      '@count' => $results['processed'],
+    ]));
+  }
+  else {
+    // Display an error message if the batch process encountered an issue.
+    \Drupal::messenger()->addError(t('There was an error processing the notifications.'));
+  }
+}
+
+
+/**
+ * Implements hook_node_insert() 
+ * 
+ * Triggers the queue when an article node is created.
+ */
+// function fitness_notifications_node_insert(\Drupal\node\NodeInterface $node) {
+//   // Check if the node is of type 'article'.
+//   if ($node->bundle() === 'article') {
+    
+//     // Inject the queue factory service.
+//     $queue = \Drupal::service('queue')->get('notify_user_queue_worker');
+
+//     $total = 10;  // Total number of users to notify.
+
+//     // Simulate enqueuing user notifications (user IDs 1 to 10).
+//     for ($i = 1; $i <= $total; $i++) {
+//       // Create a queue item with user ID, current index, and total number of items.
+//       $queue->createItem([
+//         'node_id' => $node->id(),
+//         'user_id' => $i,
+//         'position' => $i,
+//         'total' => $total,
+//       ]);
+//     }
+
+//     \Drupal::messenger()->addMessage(t('@total user notifications have been added to the queue.', [
+//       '@total' => $total
+//     ]));
+//   }
+// }
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for node entities.
+ */
+function fitness_notifications_node_update(NodeInterface $node) {
+
+  // Check if the node is a "Basic Page" (Success Story) and is being published.
+  if ($node->bundle() === 'page' && $node->isPublished() && $node->original && !$node->original->isPublished()) {
+    $story_details = [
+      'node' => $node,
+    ];
+    
+    // Get the notification service.
+    $notification_service = \Drupal::service('fitness_notifications.notification_service');
+    
+    // Notify the original author that their Success Story was published.
+    $notification_service->sendNotification($node->getOwner(), $story_details, 'story_published');
+  }
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * This hook is invoked to build the email message for content notifications
+ * related to Success Stories.
+ *
+ * @param string $key
+ *   The key identifying the type of mail being sent ('published' or 'submitted').
+ * @param array &$message
+ *   An associative array that contains the email message components.
+ * @param array $params
+ *   An associative array of parameters used to customize the email message.
+ */
+function fitness_notifications_mail($key, &$message, $params) {
+  // Determine the type of email to send based on the provided key.
+  switch ($key) {
+    case 'story_published':      
+      
+      // Set the subject line for the published notification.
+      $message['subject'] = t('Your success story has been published.');
+
+      // Add the main message body for the published notification.
+      $message['body'][] = t('Your success story "@title..." has been published.', ['@title' =>  $params['short_title']]); // The primary message.
+      $message['body'][] = t('You can view it at @url', ['@url' => $params['node_url']]); // URL to the published node.
+      break;
+
+    case 'support_request':
+      // Set the subject line for the submitted notification.
+      $message['subject'] = t('New Support Request Recieved');
+      
+      // Add the main message body with message to admin.
+      $message['body'][] = t('A new support request for the story "@title..." has been submitted by the author @author with message: @message', [
+        '@title' => $params['short_title'],
+        '@author' => $params['author_name'],
+        '@message' => $params['admin_message'],
+      ]);
+      $message['body'][] = t('You can view story node at @url', ['@url' => $params['node_url']]); // URL to the submitted node.
+      break;
+  }
+}
+

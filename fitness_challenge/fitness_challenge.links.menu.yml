@@ -1,0 +1,6 @@
+fitness_challenge.challenge_page:
+  title: 'Challenge Page'
+  description: 'Link to the challenge page.'
+  route_name: fitness_challenge.challenge_page
+  weight: 5
+  menu_name: main

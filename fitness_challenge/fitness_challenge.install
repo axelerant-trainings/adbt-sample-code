@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds an image_fid column to the fitness_workouts table to store the file ID
+ * of an image uploaded via the managed_file field.
+ */
+function fitness_challenge_update_11001(): void {
+  $schema = \Drupal::database()->schema();
+
+  // Check if the field already exists to avoid errors during the update.
+  if (!$schema->fieldExists('fitness_workouts', 'image_fid')) {
+    // Define the field specification.
+    $field_spec = [
+      'description' => 'Stores the file ID of an uploaded image (managed_file).',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,  // NULL allowed if no image is uploaded.
+      'default' => NULL,
+    ];
+
+    // Add the new field to the fitness_workouts table.
+    $schema->addField('fitness_workouts', 'image_fid', $field_spec);
+  }
+  else {
+    // Log a message if the field already exists to avoid duplicates.
+    \Drupal::logger('fitness_challenge')->notice('Field image_fid already exists in fitness_workouts table.');
+  }
+}
+
+
+/**
+ * Implements hook_install().
+ *
+ * This hook is invoked when the module is installed.
+ */
+function fitness_challenge_install() {
+  // Log a notice indicating that the fitness module has been installed.
+  \Drupal::service('logger.factory')->get('fitness_challenge')->notice('Fitness module installed.');
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * This hook is invoked when the module is uninstalled.
+ */
+function fitness_challenge_uninstall() {
+  // Log a notice indicating that the fitness module has been uninstalled.
+  \Drupal::service('logger.factory')->get('fitness_challenge')->notice('Fitness module uninstalled.');
+}
+
+
+/**
+ * Implements hook_schema().
+ *
+ * Declares the structure of the database table that will store individual 
+ * workout records.
+ *
+ * @return array
+ *   An associative array defining the schema for the fitness_workouts table.
+ */
+function fitness_challenge_schema() {
+  // Define the schema for the fitness_workouts table.
+  $schema['fitness_workouts'] = array(
+    'description' => 'Stores individual workout records.',
+
+    // Define the fields in the table.
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique workout ID.',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'User ID of the person who logged the workout.',
+      ),
+      'workout_type' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'Type of workout (e.g., cardio, strength).',
+      ),
+      'duration' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Duration of the workout in minutes.',
+      ),
+      'date' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Unix timestamp of when the workout was logged.',
+      ),
+      'image_fid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Stores the file ID of an uploaded image (managed_file).',
+        'default' => NULL,
+      ],
+    ),
+
+    // Define the primary key for the table.
+    'primary key' => array('id'),
+
+    // Define indexes for the table.
+    'indexes' => array('uid' => array('uid')),
+  );
+
+  // Return the schema array.
+  return $schema;
+}
